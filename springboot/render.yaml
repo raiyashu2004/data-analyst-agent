@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: datatwin-gateway
+    env: java
+    buildCommand: ./mvnw clean package -DskipTests
+    startCommand: java -jar target/datatwin-gateway-2.0.0.jar
+    envVars:
+      - key: PYTHON_SERVICE_URL
+        sync: false
+      - key: JAVA_VERSION
+        value: 17

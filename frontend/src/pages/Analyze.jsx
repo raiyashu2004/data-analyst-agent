@@ -96,7 +96,13 @@ export default function Analyze({ session, onReset }) {
       if (event.type === 'done') { setRunning(false); clearInterval(timerRef.current); return }
       setSteps(prev => [...prev, event])
     }
-    es.onerror = () => { toast.error('Connection lost. Is the backend running?'); setRunning(false); clearInterval(timerRef.current) }
+    es.onerror = () => {
+  es.close()
+  esRef.current = null
+  setRunning(false)
+  clearInterval(timerRef.current)
+  toast.error('Session expired — click New Dataset and reload the sample, then try again.')
+}
   }
 
   const stop = () => { esRef.current?.close(); setRunning(false); clearInterval(timerRef.current); toast('Analysis stopped') }

@@ -315,7 +315,7 @@ export default function Analyze({ session, onReset }) {
             </div>
           )}
 
-          {running && !report && (
+          {(running || charts.length > 0) && !report && (
             <div style={{
               display: 'flex', flexDirection: 'column', alignItems: 'center',
               justifyContent: 'center', height: '60%', gap: 24

@@ -86,25 +86,25 @@ class AgentOrchestrator:
                 self._add_tool_result(tc, result)
 
         if self.tool_runner.charts:
-    forced_report = {
-        "type": "final_report",
-        "title": "Data Analysis Report",
-        "summary": "The agent completed multiple analyses and generated visualizations. See findings below.",
-        "key_findings": [
-            "Multiple data visualizations were generated during analysis.",
-            "Review the agent trace on the left for detailed step-by-step findings.",
-            "Charts show key patterns found in the dataset."
-        ],
-        "recommendations": [
-            "Use the follow-up chat to ask specific questions about the charts.",
-            "Try a more specific question for a more focused analysis."
-        ],
-        "conclusion": "Analysis completed. Use the follow-up chat feature to explore specific insights."
-    }
-    yield {"type": "report", "report": forced_report, "charts": self.tool_runner.charts}
-    yield {"type": "done", "message": "✅ Analysis complete!"}
-else:
-    yield {"type": "done", "message": "✅ Max steps reached"}
+            forced_report = {
+                "type": "final_report",
+                "title": "Data Analysis Report",
+                "summary": "The agent completed multiple analyses and generated visualizations. See findings below.",
+                "key_findings": [
+                    "Multiple data visualizations were generated during analysis.",
+                    "Review the agent trace on the left for detailed step-by-step findings.",
+                    "Charts show key patterns found in the dataset."
+                ],
+                "recommendations": [
+                    "Use the follow-up chat to ask specific questions about the charts.",
+                    "Try a more specific question for a more focused analysis."
+                ],
+                "conclusion": "Analysis completed. Use the follow-up chat feature to explore specific insights."
+            }
+            yield {"type": "report", "report": forced_report, "charts": self.tool_runner.charts}
+            yield {"type": "done", "message": "✅ Analysis complete!"}
+        else:
+            yield {"type": "done", "message": "✅ Max steps reached"}
 
     # ── LLM Calls ──────────────────────────────────────────────────────────────
 

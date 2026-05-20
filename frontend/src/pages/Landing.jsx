@@ -80,7 +80,7 @@ export default function Landing({ onStart }) {
             <Brain size={16} color="#000" />
           </div>
           <span style={{ fontFamily: 'var(--f-display)', fontWeight: 700, fontSize: 18 }}>
-            DataTwin <span style={{ color: 'var(--neon)', fontSize: 12, fontFamily: 'var(--f-mono)', fontWeight: 400 }}>AGENT</span>
+            Data Pilot <span style={{ color: 'var(--neon)', fontSize: 12, fontFamily: 'var(--f-mono)', fontWeight: 400 }}>AGENT</span>
           </span>
         </div>
         <div style={{ display: 'flex', gap: 12 }}>

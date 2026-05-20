@@ -1,9 +1,9 @@
-package com.datatwin.controller;
+package com.datapilot.controller;
 
-import com.datatwin.model.ApiResponse;
-import com.datatwin.model.UploadResponse;
-import com.datatwin.service.PythonBridgeService;
-import com.datatwin.service.SseProxyService;
+import com.datapilot.model.ApiResponse;
+import com.datapilot.model.UploadResponse;
+import com.datapilot.service.PythonBridgeService;
+import com.datapilot.service.SseProxyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

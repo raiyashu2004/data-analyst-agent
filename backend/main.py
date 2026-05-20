@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-app = FastAPI(title="DataTwin ML Service", version="2.0.0")
+app = FastAPI(title="Data Pilot ML Service", version="2.0.0")
 
 app.add_middleware(
     CORSMiddleware,
@@ -17,7 +17,7 @@ app.add_middleware(
 )
 
 # ── File-based session store (survives Render restarts) ──────────────────────
-SESSIONS_DIR = "/tmp/datatwin_sessions"
+SESSIONS_DIR = "/tmp/datapilot_sessions"
 os.makedirs(SESSIONS_DIR, exist_ok=True)
 
 def save_session(session_id: str, df: pd.DataFrame):
@@ -83,7 +83,7 @@ async def event_stream(df: pd.DataFrame, question: str, provider: str):
 
 @app.get("/")
 def root():
-    return {"status": "running", "name": "DataTwin ML Service", "version": "2.0.0"}
+    return {"status": "running", "name": "Data Pilot ML Service", "version": "2.0.0"}
 
 @app.get("/health")
 def health():

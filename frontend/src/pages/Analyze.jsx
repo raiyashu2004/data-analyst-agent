@@ -124,7 +124,7 @@ export default function Analyze({ session, onReset }) {
           }}>
             <Cpu size={13} color="#000" />
           </div>
-          <span style={{ fontFamily: 'var(--f-display)', fontWeight: 700, fontSize: 15 }}>DataTwin Agent</span>
+          <span style={{ fontFamily: 'var(--f-display)', fontWeight: 700, fontSize: 15 }}>Data Pilot Agent</span>
         </div>
 
         <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 8 }}>

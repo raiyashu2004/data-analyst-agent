@@ -1,6 +1,6 @@
-package com.datatwin.service;
+package com.datapilot.service;
 
-import com.datatwin.model.UploadResponse;
+import com.datapilot.model.UploadResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

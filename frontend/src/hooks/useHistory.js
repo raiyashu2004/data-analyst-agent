@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 
-const STORAGE_KEY = 'datatwin_history'
+const STORAGE_KEY = 'datapilot_history'
 const MAX_HISTORY = 10
 
 export function useHistory() {

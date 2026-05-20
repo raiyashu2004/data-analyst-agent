@@ -1,9 +1,9 @@
 services:
   - type: web
-    name: datatwin-gateway
+    name: datapilot-gateway
     env: java
     buildCommand: ./mvnw clean package -DskipTests
-    startCommand: java -jar target/datatwin-gateway-2.0.0.jar
+    startCommand: java -jar target/datapilot-gateway-2.0.0.jar
     envVars:
       - key: PYTHON_SERVICE_URL
         sync: false

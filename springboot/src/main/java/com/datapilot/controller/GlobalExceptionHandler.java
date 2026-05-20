@@ -1,6 +1,6 @@
-package com.datatwin.controller;
+package com.datapilot.controller;
 
-import com.datatwin.model.ApiResponse;
+import com.datapilot.model.ApiResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;

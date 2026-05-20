@@ -1,7 +1,7 @@
-package com.datatwin.controller;
+package com.datapilot.controller;
 
-import com.datatwin.model.ApiResponse;
-import com.datatwin.service.PythonBridgeService;
+import com.datapilot.model.ApiResponse;
+import com.datapilot.service.PythonBridgeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,6 +32,6 @@ public class HealthController {
 
     @GetMapping("/")
     public ApiResponse<String> root() {
-        return ApiResponse.ok("DataTwin Gateway — Spring Boot API Gateway");
+        return ApiResponse.ok("Data Pilot Gateway — Spring Boot API Gateway");
     }
 }

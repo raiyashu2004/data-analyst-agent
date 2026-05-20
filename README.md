@@ -1,4 +1,4 @@
-# 🕵️ DataTwin — Autonomous Data Analyst Agent
+# 🕵️ Data Pilot — Autonomous Data Analyst Agent
 
 > An AI agent that autonomously analyzes any dataset — plans multi-step analysis, writes and runs code, generates charts, and delivers a full report. No hand-holding required.
 
@@ -102,8 +102,8 @@ Open **http://localhost:3000** → Landing page → Upload or try a sample → R
 
 ### 1 — Push to GitHub
 ```bash
-git init && git add . && git commit -m "DataTwin Agent v2"
-git remote add origin https://github.com/YOUR_NAME/datatwin-agent.git
+git init && git add . && git commit -m "Data Pilot Agent v2"
+git remote add origin https://github.com/YOUR_NAME/datapilot-agent.git
 git push -u origin main
 ```
 
@@ -112,18 +112,18 @@ git push -u origin main
 - Build: `pip install -r requirements.txt`
 - Start: `uvicorn main:app --host 0.0.0.0 --port $PORT`
 - Env: `GEMINI_API_KEY=your_key`
-- Copy URL → e.g. `https://datatwin-ml.onrender.com`
+- Copy URL → e.g. `https://datapilot-ml.onrender.com`
 
 ### 3 — Deploy Spring Boot Gateway on Render
 - New Web Service → your repo → Root dir: `springboot`
 - Build: `./mvnw clean package -DskipTests`
-- Start: `java -jar target/datatwin-gateway-2.0.0.jar`
-- Env: `PYTHON_SERVICE_URL=https://datatwin-ml.onrender.com`
-- Copy URL → e.g. `https://datatwin-gateway.onrender.com`
+- Start: `java -jar target/datapilot-gateway-2.0.0.jar`
+- Env: `PYTHON_SERVICE_URL=https://datapilot-ml.onrender.com`
+- Copy URL → e.g. `https://datapilot-gateway.onrender.com`
 
 ### 4 — Deploy Frontend on Vercel
 - New Project → your repo → Root dir: `frontend`
-- Env: `VITE_API_URL=https://datatwin-gateway.onrender.com/api`
+- Env: `VITE_API_URL=https://datapilot-gateway.onrender.com/api`
 - Deploy → live link ready ✅
 
 ---
@@ -131,7 +131,7 @@ git push -u origin main
 ## 📁 Project Structure
 
 ```
-datatwin-agent/
+datapilot-agent/
 ├── backend/                     Python ML Microservice
 │   ├── main.py                  FastAPI app + all routes
 │   ├── agent/
@@ -142,8 +142,8 @@ datatwin-agent/
 │
 ├── springboot/                  Java API Gateway
 │   ├── pom.xml
-│   └── src/main/java/com/datatwin/
-│       ├── DataTwinApplication.java
+│   └── src/main/java/com/datapilot/
+│       ├── DataPilotApplication.java
 │       ├── controller/
 │       │   ├── AnalysisController.java   All API routes
 │       │   ├── HealthController.java
@@ -174,4 +174,4 @@ datatwin-agent/
 
 ## 📝 Resume Description
 
-> **DataTwin — Autonomous Data Analyst Agent** · Full-stack agentic AI system with 3-tier architecture. Built a custom ReAct (Reason + Act) agent loop in Python where the agent autonomously plans multi-step data analyses, executes Pandas/Matplotlib code via tool use, self-corrects on errors, and streams live reasoning to the UI via SSE. Spring Boot API gateway handles routing, CORS, file validation, and SSE proxying. Supports Gemini, Claude, and GPT-4 as switchable AI backends. Stack: React, Spring Boot 3 (Java 17), FastAPI, Gemini AI, SSE streaming. Deployed on Vercel + Render.
+> **Data Pilot — Autonomous Data Analyst Agent** · Full-stack agentic AI system with 3-tier architecture. Built a custom ReAct (Reason + Act) agent loop in Python where the agent autonomously plans multi-step data analyses, executes Pandas/Matplotlib code via tool use, self-corrects on errors, and streams live reasoning to the UI via SSE. Spring Boot API gateway handles routing, CORS, file validation, and SSE proxying. Supports Gemini, Claude, and GPT-4 as switchable AI backends. Stack: React, Spring Boot 3 (Java 17), FastAPI, Gemini AI, SSE streaming. Deployed on Vercel + Render.

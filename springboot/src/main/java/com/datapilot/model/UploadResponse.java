@@ -1,4 +1,4 @@
-package com.datatwin.model;
+package com.datapilot.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;

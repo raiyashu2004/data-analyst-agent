@@ -1,4 +1,4 @@
-package com.datatwin.model;
+package com.datapilot.model;
 
 public class ApiResponse<T> {
     private boolean success;

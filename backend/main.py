@@ -2,14 +2,13 @@ from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 import pandas as pd
-import io, json, uuid, os, asyncio
+import io, json, uuid, os, asyncio, pickle
 from dotenv import load_dotenv
 
 load_dotenv()
 
-app = FastAPI(title="DataTwin ML Microservice", version="2.0.0")
+app = FastAPI(title="DataTwin ML Service", version="2.0.0")
 
-# Allow Spring Boot gateway + direct dev access
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -17,8 +16,23 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-_sessions: dict[str, pd.DataFrame] = {}
+# ── File-based session store (survives Render restarts) ──────────────────────
+SESSIONS_DIR = "/tmp/datatwin_sessions"
+os.makedirs(SESSIONS_DIR, exist_ok=True)
 
+def save_session(session_id: str, df: pd.DataFrame):
+    path = os.path.join(SESSIONS_DIR, f"{session_id}.pkl")
+    with open(path, 'wb') as f:
+        pickle.dump(df, f)
+
+def load_session(session_id: str):
+    path = os.path.join(SESSIONS_DIR, f"{session_id}.pkl")
+    if not os.path.exists(path):
+        return None
+    with open(path, 'rb') as f:
+        return pickle.load(f)
+
+# ── Helpers ──────────────────────────────────────────────────────────────────
 
 def read_uploaded_file(contents: bytes, filename: str) -> pd.DataFrame:
     ext = filename.rsplit('.', 1)[-1].lower()
@@ -40,7 +54,6 @@ def read_uploaded_file(contents: bytes, filename: str) -> pd.DataFrame:
     else:
         raise ValueError(f"Unsupported file type: {ext}")
 
-
 def df_to_preview(df: pd.DataFrame, filename: str, session_id: str) -> dict:
     df.columns = [str(c).strip() for c in df.columns]
     return {
@@ -58,7 +71,6 @@ def df_to_preview(df: pd.DataFrame, filename: str, session_id: str) -> dict:
         "head": df.head(5).fillna("").to_dict(orient='records')
     }
 
-
 async def event_stream(df: pd.DataFrame, question: str, provider: str):
     from agent.orchestrator import AgentOrchestrator
     agent = AgentOrchestrator(df, question, provider)
@@ -67,10 +79,11 @@ async def event_stream(df: pd.DataFrame, question: str, provider: str):
         await asyncio.sleep(0)
     yield 'data: {"type": "end"}\n\n'
 
+# ── Routes ───────────────────────────────────────────────────────────────────
 
 @app.get("/")
 def root():
-    return {"status": "running", "name": "DataTwin ML Microservice", "version": "2.0.0"}
+    return {"status": "running", "name": "DataTwin ML Service", "version": "2.0.0"}
 
 @app.get("/health")
 def health():
@@ -87,9 +100,8 @@ async def upload_file(file: UploadFile = File(...)):
         raise HTTPException(400, f"Could not read file: {e}")
     df.columns = [str(c).strip() for c in df.columns]
     session_id = str(uuid.uuid4())
-    _sessions[session_id] = df
+    save_session(session_id, df)
     return df_to_preview(df, file.filename, session_id)
-
 
 @app.get("/sample/{key}")
 def load_sample(key: str):
@@ -101,8 +113,8 @@ def load_sample(key: str):
         months = pd.date_range('2023-01-01', periods=12, freq='ME')
         df = pd.DataFrame({
             "date": [str(d)[:10] for d in np.random.choice(months, n)],
-            "product": np.random.choice(['Laptop', 'Phone', 'Tablet', 'Watch', 'Headphones'], n),
-            "region": np.random.choice(['North', 'South', 'East', 'West'], n),
+            "product": np.random.choice(['Laptop','Phone','Tablet','Watch','Headphones'], n),
+            "region": np.random.choice(['North','South','East','West'], n),
             "sales_rep": np.random.choice([f'Rep_{i}' for i in range(1, 11)], n),
             "units_sold": np.random.randint(1, 50, n),
             "unit_price": np.random.choice([299, 499, 799, 1299, 1999], n),
@@ -124,26 +136,25 @@ def load_sample(key: str):
             "math_score": np.random.randint(30, 100, n),
             "science_score": np.random.randint(30, 100, n),
             "english_score": np.random.randint(30, 100, n),
-            "grade": np.random.choice(['A', 'B', 'C', 'D', 'F'], n, p=[0.2, 0.3, 0.3, 0.15, 0.05]),
+            "grade": np.random.choice(['A','B','C','D','F'], n, p=[0.2,0.3,0.3,0.15,0.05]),
         })
         df['math_score'] = (df['math_score'] + df['study_hours_per_day'] * 4).clip(0, 100).astype(int)
         df['science_score'] = (df['science_score'] + df['study_hours_per_day'] * 3).clip(0, 100).astype(int)
-        df['avg_score'] = df[['math_score', 'science_score', 'english_score']].mean(axis=1).round(1)
+        df['avg_score'] = df[['math_score','science_score','english_score']].mean(axis=1).round(1)
     else:
         raise HTTPException(404, "Sample not found. Use 'sales' or 'students'.")
 
     session_id = str(uuid.uuid4())
-    _sessions[session_id] = df
+    save_session(session_id, df)
     return df_to_preview(df, f"{key}_sample.csv", session_id)
-
 
 @app.get("/analyze")
 async def analyze(session_id: str, question: str, provider: str = "gemini"):
-    if session_id not in _sessions:
-        raise HTTPException(404, "Session not found. Please upload file again.")
+    df = load_session(session_id)
+    if df is None:
+        raise HTTPException(404, "Session not found. Please reload the dataset.")
     if provider not in ("claude", "openai", "gemini"):
         raise HTTPException(400, "provider must be 'claude', 'openai', or 'gemini'")
-    df = _sessions[session_id]
     return StreamingResponse(
         event_stream(df, question, provider),
         media_type="text/event-stream",
@@ -152,5 +163,7 @@ async def analyze(session_id: str, question: str, provider: str = "gemini"):
 
 @app.delete("/session/{session_id}")
 def delete_session(session_id: str):
-    _sessions.pop(session_id, None)
+    path = os.path.join(SESSIONS_DIR, f"{session_id}.pkl")
+    if os.path.exists(path):
+        os.remove(path)
     return {"deleted": session_id}

@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-app = FastAPI(title="Data Pilot ML Service", version="2.0.0")
+app = FastAPI(title="STRATEGOS ML Service", version="2.0.0")
 
 app.add_middleware(
     CORSMiddleware,
@@ -83,7 +83,7 @@ async def event_stream(df: pd.DataFrame, question: str, provider: str):
 
 @app.get("/")
 def root():
-    return {"status": "running", "name": "Data Pilot ML Service", "version": "2.0.0"}
+    return {"status": "running", "name": "STRATEGOS ML Service", "version": "2.0.0"}
 
 @app.get("/health")
 def health():

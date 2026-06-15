@@ -20,7 +20,7 @@ export default function Landing({ onStart }) {
             <Brain size={18} />
           </div>
           <span className="font-bold text-lg tracking-tight">
-            DataPlatform <span className="text-brand-600 text-xs font-mono font-medium ml-1 bg-brand-50 px-1.5 py-0.5 rounded">AGENT</span>
+            STRATEGOS <span className="text-brand-600 text-xs font-mono font-medium ml-1 bg-brand-50 px-1.5 py-0.5 rounded">AGENT</span>
           </span>
         </div>
         <div className="flex gap-3">
@@ -104,7 +104,7 @@ export default function Landing({ onStart }) {
             Beyond a Dashboard
           </h2>
           <p className="text-lg text-gray-500 mt-4 max-w-2xl mx-auto">
-            DataTwin doesn't just display data; it thinks through problems and acts like a genuine analyst.
+            STRATEGOS doesn't just display data; it thinks through problems and acts like a genuine analyst.
           </p>
         </div>
         

@@ -503,7 +503,7 @@ export default function Analyze({ session, onReset }) {
             <Database size={16} />
           </div>
           <div>
-            <h1 className="font-bold text-sm tracking-tight text-gray-900">DataPlatform</h1>
+            <h1 className="font-bold text-sm tracking-tight text-gray-900">STRATEGOS</h1>
             <p className="text-[10px] text-gray-500 font-medium">Workspace</p>
           </div>
         </div>

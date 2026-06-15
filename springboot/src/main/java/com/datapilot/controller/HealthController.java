@@ -32,6 +32,6 @@ public class HealthController {
 
     @GetMapping("/")
     public ApiResponse<String> root() {
-        return ApiResponse.ok("Data Pilot Gateway — Spring Boot API Gateway");
+        return ApiResponse.ok("STRATEGOS Gateway — Spring Boot API Gateway");
     }
 }

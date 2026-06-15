@@ -1,177 +1,54 @@
-# 🕵️ Data Pilot — Autonomous Data Analyst Agent
+# 🕵️ STRATEGOS — Autonomous Data Analyst Agent
 
-> An AI agent that autonomously analyzes any dataset — plans multi-step analysis, writes and runs code, generates charts, and delivers a full report. No hand-holding required.
+**STRATEGOS** is a full-stack, AI-powered autonomous data analyst. Upload any CSV or Excel dataset, ask questions in plain English, and the agent will independently reason, write Python code, execute it in a secure sandbox, and generate comprehensive reports with interactive visualizations.
 
-**Live Demo:** [your-app.vercel.app](https://your-app.vercel.app)
+Built with a **React** frontend, a **Spring Boot** API Gateway, and a **FastAPI** Python ML Service powering a custom ReAct (Reason + Act) loop.
 
 ---
 
-## 🏗️ Architecture (3-Tier)
+## 🌟 Key Features
 
+- **🧠 Autonomous Agent Loop:** Custom ReAct loop implementation. The agent plans its approach, writes Pandas/Matplotlib code, executes it, self-corrects if errors occur, and repeats until the analysis is complete.
+- **⚡ Live Streaming:** Server-Sent Events (SSE) stream the agent's internal "thought process" and code execution directly to the UI in real-time.
+- **📊 Auto-Visualizations:** The agent is instructed to generate `matplotlib` charts, which are base64-encoded and embedded directly in the final report.
+- **🔌 Multi-Model Support:** Seamlessly switch between **Gemini**, **Claude**, and **GPT-4** from the UI.
+- **🏢 Enterprise SaaS UI:** Clean, professional dashboard design.
+- **🔒 Secure Architecture:** 3-tier architecture with a Java Spring Boot gateway handling routing, file validation, and CORS, isolating the Python ML execution environment.
+
+## 🏗️ Architecture
+
+```mermaid
+graph LR
+    A[React Frontend] -->|REST / SSE| B[Spring Boot Gateway]
+    B -->|Proxy| C[FastAPI ML Service]
+    C -->|API| D[LLM Provider]
+    C -->|Exec| E[Local Sandbox]
 ```
-┌─────────────────────────────────────────────────────┐
-│  React Frontend  (Vercel / localhost:3000)          │
-│  Landing · Upload · Analyze · History · Export      │
-└───────────────────┬─────────────────────────────────┘
-                    │ HTTP / SSE
-┌───────────────────▼─────────────────────────────────┐
-│  Spring Boot Gateway  (Render / localhost:8080)     │
-│  CORS · Validation · File handling · SSE Proxy      │
-└───────────────────┬─────────────────────────────────┘
-                    │ HTTP / SSE proxy
-┌───────────────────▼─────────────────────────────────┐
-│  FastAPI ML Microservice  (Render / localhost:8001) │
-│  Gemini AI · Pandas · Matplotlib · ReAct Loop      │
-└─────────────────────────────────────────────────────┘
+
+## 🚀 Quick Start (Docker)
+
+The easiest way to run STRATEGOS is via Docker Compose.
+
+1. Clone the repository
+2. Create a `.env` file in the root directory (or use `.env.example`)
+3. Run:
+```bash
+docker compose up --build -d
 ```
-
-## ✨ Features
-
-| Feature | Description |
-|---|---|
-| 🏠 Landing Page | Animated hero with typewriter effect, floating orbs, architecture diagram |
-| 📁 Data Profiling | Instant column stats, types, nulls, sample rows on upload |
-| 🤖 Agentic AI | ReAct loop — plans, calls tools, self-corrects errors |
-| 📊 Auto Charts | Matplotlib charts generated and streamed live |
-| 💬 Follow-up Chat | Ask deeper questions after the report |
-| 📁 Analysis History | All sessions saved to localStorage with timestamps |
-| 📤 Export | Download full report as Markdown |
-| ⚡ Live Streaming | Every agent reasoning step via SSE |
-| 🔄 Multi-provider | Gemini, Claude, GPT-4 switchable in the UI |
+4. Access the UI at `http://localhost:3000`
 
 ## 🛠️ Tech Stack
 
-| Layer | Tech |
-|---|---|
-| Frontend | React 18, Vite, Lucide icons |
-| API Gateway | Spring Boot 3.2, Java 17, Lombok |
-| ML Microservice | FastAPI, Python 3, AsyncIO |
-| AI | Gemini 3.1 Flash Lite (tool use / function calling) |
-| Data | Pandas, NumPy, Matplotlib, SciPy |
-| Streaming | Server-Sent Events (SSE) |
-| Deploy | Vercel (frontend) + Render (backend x2) |
+- **Frontend:** React, TailwindCSS, Lucide Icons, Vite
+- **Gateway:** Java 17, Spring Boot 3.2, Spring WebFlux
+- **ML Service:** Python 3.11, FastAPI, Pandas, Matplotlib, LangChain / LiteLLM
+- **Deployment:** Docker, Docker Compose
 
----
+## 📝 Usage
 
-## 🚀 Run Locally
-
-### Prerequisites
-- Python 3.11+ and pip
-- Java 17+ and Maven
-- Node.js 18+
-
-### Step 1 — Python ML Service (port 8001)
-```bash
-cd backend
-python3 -m venv venv
-source venv/bin/activate        # Mac/Linux
-# venv\Scripts\activate         # Windows
-
-pip install -r requirements.txt
-
-cp .env.example .env
-# Edit .env → add GEMINI_API_KEY=AIzaSy...
-
-uvicorn main:app --reload --port 8001
-```
-
-### Step 2 — Spring Boot Gateway (port 8080)
-```bash
-cd springboot
-./mvnw spring-boot:run
-# First run downloads dependencies (~2 min)
-```
-
-### Step 3 — React Frontend (port 3000)
-```bash
-cd frontend
-npm install
-npm run dev
-```
-
-Open **http://localhost:3000** → Landing page → Upload or try a sample → Run Analysis
-
-### Health checks
-- Gateway: http://localhost:8080/api/health  (shows Python status too)
-- Python:  http://localhost:8001/health
-- API docs: http://localhost:8001/docs  (FastAPI auto-docs)
-
----
-
-## 🚀 Deploy
-
-### 1 — Push to GitHub
-```bash
-git init && git add . && git commit -m "Data Pilot Agent v2"
-git remote add origin https://github.com/YOUR_NAME/datapilot-agent.git
-git push -u origin main
-```
-
-### 2 — Deploy Python ML Service on Render
-- New Web Service → your repo → Root dir: `backend`
-- Build: `pip install -r requirements.txt`
-- Start: `uvicorn main:app --host 0.0.0.0 --port $PORT`
-- Env: `GEMINI_API_KEY=your_key`
-- Copy URL → e.g. `https://datapilot-ml.onrender.com`
-
-### 3 — Deploy Spring Boot Gateway on Render
-- New Web Service → your repo → Root dir: `springboot`
-- Build: `./mvnw clean package -DskipTests`
-- Start: `java -jar target/datapilot-gateway-2.0.0.jar`
-- Env: `PYTHON_SERVICE_URL=https://datapilot-ml.onrender.com`
-- Copy URL → e.g. `https://datapilot-gateway.onrender.com`
-
-### 4 — Deploy Frontend on Vercel
-- New Project → your repo → Root dir: `frontend`
-- Env: `VITE_API_URL=https://datapilot-gateway.onrender.com/api`
-- Deploy → live link ready ✅
-
----
-
-## 📁 Project Structure
-
-```
-datapilot-agent/
-├── backend/                     Python ML Microservice
-│   ├── main.py                  FastAPI app + all routes
-│   ├── agent/
-│   │   ├── orchestrator.py      ReAct agent loop
-│   │   └── tools.py             6 analysis tools
-│   ├── sandbox/executor.py      Safe code runner
-│   └── requirements.txt
-│
-├── springboot/                  Java API Gateway
-│   ├── pom.xml
-│   └── src/main/java/com/datapilot/
-│       ├── DataPilotApplication.java
-│       ├── controller/
-│       │   ├── AnalysisController.java   All API routes
-│       │   ├── HealthController.java
-│       │   └── GlobalExceptionHandler.java
-│       ├── service/
-│       │   ├── PythonBridgeService.java  Calls Python
-│       │   └── SseProxyService.java      SSE streaming proxy
-│       ├── model/
-│       │   ├── ApiResponse.java
-│       │   └── UploadResponse.java
-│       └── config/
-│           ├── CorsConfig.java
-│           └── AppConfig.java
-│
-└── frontend/                    React App
-    └── src/
-        ├── pages/
-        │   ├── Landing.jsx      Animated landing
-        │   ├── Upload.jsx       File upload + samples
-        │   └── Analyze.jsx      Main agent interface
-        └── components/
-            ├── AgentLog.jsx     Live steps panel
-            ├── Report.jsx       Report + follow-up chat
-            └── DataProfile.jsx  Dataset stats
-```
-
----
-
-## 📝 Resume Description
-
-> **Data Pilot — Autonomous Data Analyst Agent** · Full-stack agentic AI system with 3-tier architecture. Built a custom ReAct (Reason + Act) agent loop in Python where the agent autonomously plans multi-step data analyses, executes Pandas/Matplotlib code via tool use, self-corrects on errors, and streams live reasoning to the UI via SSE. Spring Boot API gateway handles routing, CORS, file validation, and SSE proxying. Supports Gemini, Claude, and GPT-4 as switchable AI backends. Stack: React, Spring Boot 3 (Java 17), FastAPI, Gemini AI, SSE streaming. Deployed on Vercel + Render.
+1. **Upload Data:** Drag and drop a `.csv` or `.xlsx` file.
+2. **Profile Data:** Review the automatically generated Data Explorer profile to see column types, null counts, and sample values.
+3. **Ask a Question:** Ask a specific question (e.g., "What factors drive employee attrition?") or ask for a general analysis.
+4. **Watch the Agent:** Observe the right sidebar to see the agent's live reasoning, tool usage, and execution logs.
+5. **Review Report:** Analyze the generated Executive Summary, Key Findings, Recommendations, and Charts.
+6. **Follow-up:** Use the Follow-up Chat to ask specific questions about the generated report.

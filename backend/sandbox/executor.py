@@ -23,7 +23,7 @@ class CodeExecutor:
             for fig_num in plt.get_fignums():
                 fig = plt.figure(fig_num)
                 buf = io.BytesIO()
-                fig.savefig(buf, format='png', bbox_inches='tight', facecolor='#0d1420', dpi=130)
+                fig.savefig(buf, format='png', bbox_inches='tight', transparent=True, dpi=130)
                 buf.seek(0)
                 charts.append(base64.b64encode(buf.read()).decode())
                 plt.close(fig)

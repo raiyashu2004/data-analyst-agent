@@ -1,161 +1,96 @@
-import { useState, useEffect } from 'react'
-import { ArrowRight, Brain, Zap, BarChart3, MessageSquare, Sparkles, ChevronRight, Github } from 'lucide-react'
+import { ArrowRight, Brain, Zap, BarChart3, MessageSquare, ChevronRight, Github } from 'lucide-react'
 
 const FEATURES = [
-  { icon: Brain, label: 'Agentic AI', desc: 'ReAct loop with tool use — plans, codes, corrects itself', color: 'var(--neon)' },
-  { icon: BarChart3, label: 'Auto Analysis', desc: 'Pandas + Matplotlib charts generated autonomously', color: 'var(--neon-2)' },
-  { icon: MessageSquare, label: 'Follow-up Chat', desc: 'Ask follow-up questions after the report', color: 'var(--neon-3)' },
-  { icon: Zap, label: 'Live Streaming', desc: 'Watch every reasoning step in real time via SSE', color: 'var(--amber)' },
+  { icon: Brain, label: 'Agentic AI', desc: 'ReAct loop with tool use — plans, codes, corrects itself', color: 'text-brand-600 bg-brand-50 border-brand-200' },
+  { icon: BarChart3, label: 'Auto Analysis', desc: 'Pandas + Matplotlib charts generated autonomously', color: 'text-indigo-600 bg-indigo-50 border-indigo-200' },
+  { icon: MessageSquare, label: 'Follow-up Chat', desc: 'Ask follow-up questions after the report', color: 'text-purple-600 bg-purple-50 border-purple-200' },
+  { icon: Zap, label: 'Live Streaming', desc: 'Watch every reasoning step in real time via SSE', color: 'text-amber-600 bg-amber-50 border-amber-200' },
 ]
 
 const TECH = ['Spring Boot', 'FastAPI', 'React', 'Gemini AI', 'Pandas', 'SSE', 'Java 17', 'Python 3']
 
-const TYPED_WORDS = [
-  'Sales Trends',
-  'Student Performance',
-  'Revenue Patterns',
-  'Risk Factors',
-  'Market Insights',
-]
-
-function TypedWord() {
-  const [idx, setIdx] = useState(0)
-  const [displayed, setDisplayed] = useState('')
-  const [deleting, setDeleting] = useState(false)
-
-  useEffect(() => {
-    const word = TYPED_WORDS[idx]
-    let timeout
-    if (!deleting && displayed.length < word.length) {
-      timeout = setTimeout(() => setDisplayed(word.slice(0, displayed.length + 1)), 80)
-    } else if (!deleting && displayed.length === word.length) {
-      timeout = setTimeout(() => setDeleting(true), 2000)
-    } else if (deleting && displayed.length > 0) {
-      timeout = setTimeout(() => setDisplayed(displayed.slice(0, -1)), 40)
-    } else if (deleting && displayed.length === 0) {
-      setDeleting(false)
-      setIdx((idx + 1) % TYPED_WORDS.length)
-    }
-    return () => clearTimeout(timeout)
-  }, [displayed, deleting, idx])
-
-  return (
-    <span style={{ color: 'var(--neon)', display: 'inline-block', minWidth: 280 }}>
-      {displayed}<span style={{ animation: 'blink 1s infinite', color: 'var(--neon)' }}>|</span>
-    </span>
-  )
-}
-
-function FloatingOrb({ style }) {
-  return (
-    <div style={{
-      position: 'absolute', borderRadius: '50%',
-      filter: 'blur(80px)', opacity: 0.15,
-      animation: 'float 6s ease-in-out infinite',
-      pointerEvents: 'none', ...style
-    }} />
-  )
-}
-
 export default function Landing({ onStart }) {
   return (
-    <div style={{ minHeight: '100vh', overflow: 'hidden' }}>
-      <FloatingOrb style={{ width: 400, height: 400, background: 'var(--neon)', top: -100, left: -100, animationDelay: '0s' }} />
-      <FloatingOrb style={{ width: 300, height: 300, background: 'var(--neon-2)', top: 200, right: -80, animationDelay: '2s' }} />
-      <FloatingOrb style={{ width: 250, height: 250, background: 'var(--neon-3)', bottom: 100, left: '30%', animationDelay: '4s' }} />
-
+    <div className="min-h-screen bg-gray-50 text-gray-900 font-sans selection:bg-brand-100 selection:text-brand-900">
+      
       {/* Nav */}
-      <nav style={{
-        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        padding: '20px 48px', borderBottom: '1px solid var(--b1)',
-        backdropFilter: 'blur(20px)', position: 'sticky', top: 0, zIndex: 50,
-        background: 'rgba(2,4,8,0.8)'
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <div style={{
-            width: 32, height: 32, borderRadius: 8,
-            background: 'linear-gradient(135deg, var(--neon), var(--neon-2))',
-            display: 'flex', alignItems: 'center', justifyContent: 'center'
-          }}>
-            <Brain size={16} color="#000" />
+      <nav className="sticky top-0 z-50 flex items-center justify-between px-6 py-4 bg-white/80 backdrop-blur-md border-b border-gray-200">
+        <div className="flex items-center gap-2.5">
+          <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-brand-600 text-white shadow-sm">
+            <Brain size={18} />
           </div>
-          <span style={{ fontFamily: 'var(--f-display)', fontWeight: 700, fontSize: 18 }}>
-            Data Pilot <span style={{ color: 'var(--neon)', fontSize: 12, fontFamily: 'var(--f-mono)', fontWeight: 400 }}>AGENT</span>
+          <span className="font-bold text-lg tracking-tight">
+            DataPlatform <span className="text-brand-600 text-xs font-mono font-medium ml-1 bg-brand-50 px-1.5 py-0.5 rounded">AGENT</span>
           </span>
         </div>
-        <div style={{ display: 'flex', gap: 12 }}>
-          <a href="https://github.com" target="_blank" className="btn btn-ghost" style={{ padding: '8px 16px', fontSize: 13 }}>
-            <Github size={14} /> GitHub
+        <div className="flex gap-3">
+          <a href="https://github.com" target="_blank" rel="noreferrer" className="btn btn-ghost text-sm px-3 py-1.5 hidden sm:flex">
+            <Github size={16} /> GitHub
           </a>
-          <button onClick={onStart} className="btn btn-neon" style={{ padding: '8px 20px', fontSize: 13 }}>
-            Launch App <ArrowRight size={14} />
+          <button onClick={onStart} className="btn btn-neon text-sm px-4 py-1.5">
+            Launch App <ArrowRight size={16} />
           </button>
         </div>
       </nav>
 
       {/* Hero */}
-      <section style={{ textAlign: 'center', padding: '100px 24px 80px', maxWidth: 900, margin: '0 auto' }}>
-        <h1 className="anim-up" style={{
-          fontFamily: 'var(--f-display)', fontSize: 'clamp(40px, 7vw, 80px)',
-          fontWeight: 700, lineHeight: 1.05, letterSpacing: '-0.03em', marginBottom: 24
-        }}>
-          Autonomous AI Agent<br />
-          that Analyzes <TypedWord />
+      <section className="text-center px-6 pt-32 pb-24 max-w-4xl mx-auto">
+        <div className="inline-flex items-center gap-2 px-3 py-1 mb-8 rounded-full bg-brand-50 border border-brand-100 text-brand-700 text-sm font-medium">
+          <SparklesIcon className="w-4 h-4" />
+          <span>v2.0 Released. Smarter and faster.</span>
+        </div>
+        
+        <h1 className="text-5xl sm:text-6xl md:text-7xl font-extrabold tracking-tight text-gray-900 leading-[1.1] mb-6">
+          Autonomous Data Analysis <br className="hidden sm:block" />
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-600 to-indigo-600">
+            at your fingertips
+          </span>
         </h1>
 
-        <p className="anim-up-1" style={{
-          fontSize: 18, color: 'var(--t2)', lineHeight: 1.7,
-          maxWidth: 600, margin: '0 auto 40px'
-        }}>
-          Upload any dataset, ask a question, and watch an AI agent autonomously
-          plan, write code, run analyses, generate charts, and deliver a full report.
+        <p className="text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto mb-10 leading-relaxed">
+          Upload any dataset, ask a question, and watch an AI agent autonomously plan, write code, run analyses, generate charts, and deliver a full report.
         </p>
 
-        <div className="anim-up-2" style={{ display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap' }}>
-          <button onClick={onStart} className="btn btn-neon" style={{ padding: '14px 32px', fontSize: 15 }}>
-            <Zap size={16} /> Try the Agent
+        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+          <button onClick={onStart} className="btn btn-neon text-base px-8 py-3 shadow-md hover:shadow-lg">
+            <Zap size={18} /> Try the Agent
           </button>
-          <a href="#features" className="btn btn-glass" style={{ padding: '14px 32px', fontSize: 15 }}>
-            See Features <ChevronRight size={14} />
+          <a href="#features" className="btn btn-glass text-base px-8 py-3">
+            See Features <ChevronRight size={18} />
           </a>
         </div>
 
         {/* Tech stack pills */}
-        <div className="anim-up-3" style={{ display: 'flex', gap: 8, justifyContent: 'center', flexWrap: 'wrap', marginTop: 48 }}>
+        <div className="flex flex-wrap justify-center gap-2 mt-16 max-w-3xl mx-auto">
           {TECH.map(t => (
-            <span key={t} style={{
-              padding: '4px 12px', borderRadius: 999,
-              background: 'rgba(255,255,255,0.04)',
-              border: '1px solid rgba(255,255,255,0.08)',
-              fontSize: 12, color: 'var(--t2)', fontFamily: 'var(--f-mono)'
-            }}>{t}</span>
+            <span key={t} className="px-3 py-1.5 rounded-full bg-white border border-gray-200 text-xs font-medium text-gray-600 shadow-sm">
+              {t}
+            </span>
           ))}
         </div>
       </section>
 
       {/* Architecture */}
-      <section style={{ padding: '0 24px 80px', maxWidth: 800, margin: '0 auto' }}>
-        <div className="glass anim-in" style={{ padding: '28px 32px' }}>
-          <div className="mono-label" style={{ marginBottom: 20, color: 'var(--t2)' }}>System Architecture</div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 0, overflowX: 'auto' }}>
+      <section className="px-6 pb-24 max-w-5xl mx-auto">
+        <div className="bg-white rounded-2xl p-8 sm:p-10 border border-gray-200 shadow-sm">
+          <div className="text-sm font-semibold uppercase tracking-wider text-gray-500 mb-8 text-center sm:text-left">
+            System Architecture
+          </div>
+          <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-0 overflow-x-auto pb-4 sm:pb-0">
             {[
-              { label: 'React', sub: 'Frontend', color: 'var(--neon-2)' },
+              { label: 'React', sub: 'Frontend', color: 'border-blue-200 bg-blue-50 text-blue-700' },
               { arrow: true },
-              { label: 'Spring Boot', sub: 'Gateway :8080', color: 'var(--amber)' },
+              { label: 'Spring Boot', sub: 'Gateway :8080', color: 'border-green-200 bg-green-50 text-green-700' },
               { arrow: true },
-              { label: 'FastAPI', sub: 'ML Service :8001', color: 'var(--neon-3)' },
+              { label: 'FastAPI', sub: 'ML Service :8001', color: 'border-teal-200 bg-teal-50 text-teal-700' },
               { arrow: true },
-              { label: 'Gemini AI', sub: 'Tool Use', color: 'var(--neon)' },
+              { label: 'Gemini AI', sub: 'Tool Use', color: 'border-brand-200 bg-brand-50 text-brand-700' },
             ].map((item, i) => item.arrow ? (
-              <div key={i} style={{ color: 'var(--t3)', padding: '0 12px', fontSize: 20, flexShrink: 0 }}>→</div>
+              <div key={i} className="text-gray-300 px-4 text-xl sm:rotate-0 rotate-90 shrink-0">→</div>
             ) : (
-              <div key={i} style={{
-                padding: '12px 20px', borderRadius: 10, flexShrink: 0,
-                background: 'rgba(255,255,255,0.03)',
-                border: `1px solid ${item.color}30`, textAlign: 'center'
-              }}>
-                <div style={{ fontSize: 13, fontWeight: 700, color: item.color, fontFamily: 'var(--f-display)' }}>{item.label}</div>
-                <div style={{ fontSize: 10, color: 'var(--t3)', fontFamily: 'var(--f-mono)', marginTop: 3 }}>{item.sub}</div>
+              <div key={i} className={`px-5 py-4 rounded-xl border shrink-0 text-center w-40 ${item.color}`}>
+                <div className="text-sm font-bold">{item.label}</div>
+                <div className="text-xs font-mono mt-1 opacity-80">{item.sub}</div>
               </div>
             ))}
           </div>
@@ -163,37 +98,45 @@ export default function Landing({ onStart }) {
       </section>
 
       {/* Features */}
-      <section id="features" style={{ padding: '0 24px 100px', maxWidth: 960, margin: '0 auto' }}>
-        <div style={{ textAlign: 'center', marginBottom: 48 }}>
-          <div className="mono-label" style={{ marginBottom: 12 }}>What it does</div>
-          <h2 style={{ fontFamily: 'var(--f-display)', fontSize: 'clamp(28px, 4vw, 40px)', fontWeight: 700 }}>
+      <section id="features" className="px-6 pb-32 max-w-6xl mx-auto">
+        <div className="text-center mb-16">
+          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 tracking-tight">
             Beyond a Dashboard
           </h2>
+          <p className="text-lg text-gray-500 mt-4 max-w-2xl mx-auto">
+            DataTwin doesn't just display data; it thinks through problems and acts like a genuine analyst.
+          </p>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 16 }}>
-          {FEATURES.map((f, i) => {
+        
+        <div className="grid sm:grid-cols-2 gap-6 lg:gap-8">
+          {FEATURES.map((f) => {
             const Icon = f.icon
             return (
-              <div key={f.label} className={`glass anim-up-${i + 1}`} style={{ padding: '28px' }}>
-                <div style={{
-                  width: 44, height: 44, borderRadius: 10, marginBottom: 16,
-                  background: `${f.color}15`, border: `1px solid ${f.color}30`,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center'
-                }}>
-                  <Icon size={20} color={f.color} />
+              <div key={f.label} className="bg-white p-8 rounded-2xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+                <div className={`w-12 h-12 rounded-xl flex items-center justify-center border mb-6 ${f.color}`}>
+                  <Icon size={24} />
                 </div>
-                <div style={{ fontFamily: 'var(--f-display)', fontSize: 18, fontWeight: 600, marginBottom: 8 }}>{f.label}</div>
-                <div style={{ fontSize: 14, color: 'var(--t2)', lineHeight: 1.6 }}>{f.desc}</div>
+                <h3 className="text-xl font-bold text-gray-900 mb-3">{f.label}</h3>
+                <p className="text-gray-600 leading-relaxed">{f.desc}</p>
               </div>
             )
           })}
         </div>
-        <div style={{ textAlign: 'center', marginTop: 60 }}>
-          <button onClick={onStart} className="btn btn-neon" style={{ padding: '16px 48px', fontSize: 16 }}>
-            <Brain size={18} /> Launch Agent
+        
+        <div className="text-center mt-20">
+          <button onClick={onStart} className="btn btn-neon text-base px-10 py-4 shadow-md">
+            <Brain size={20} /> Launch Agent
           </button>
         </div>
       </section>
     </div>
+  )
+}
+
+function SparklesIcon(props) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+      <path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z" />
+    </svg>
   )
 }

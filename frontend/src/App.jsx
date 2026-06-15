@@ -23,15 +23,16 @@ export default function App() {
     <>
       <Toaster
         position="top-right"
-        toastOptions={{
-          style: {
-            background: 'rgba(10,22,40,0.95)',
-            color: 'var(--t1)',
-            border: '1px solid var(--b2)',
-            fontFamily: 'Instrument Sans, sans-serif',
-            fontSize: 14,
-            backdropFilter: 'blur(20px)',
-          }
+          toastOptions={{
+            style: {
+              background: '#ffffff',
+              color: '#111827',
+              border: '1px solid #e5e7eb',
+              fontSize: '13px',
+              fontWeight: '500',
+              borderRadius: '8px',
+              boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+            },
         }}
       />
       {page === 'landing' && <Landing onStart={() => setPage('upload')} />}

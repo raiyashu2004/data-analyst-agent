@@ -21,9 +21,7 @@ Rules:
 - If code produces an error, fix and retry with corrected code
 - Generate at least one chart using matplotlib (plt) when relevant
 - Base ALL findings on actual data - never fabricate numbers
-- For charts: fig.patch.set_facecolor('#0d1420'); ax.set_facecolor('#0d1420'); use '#00f0c8' as primary color, white tick labels
-- Always use print() to output key statistics alongside charts
-- Example: print(df.groupby('region')['revenue'].mean().to_string())
+- For charts: use a clean, modern light style (e.g., plt.style.use('seaborn-v0_8-whitegrid')). Do NOT use dark backgrounds. Use '#2563eb' (blue) as the primary color, and dark gray for text and tick labels.
 """
 
 

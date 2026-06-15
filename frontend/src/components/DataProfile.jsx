@@ -1,139 +1,117 @@
 import { useState } from 'react'
-import { ChevronDown, ChevronUp, Hash, Type, AlertCircle } from 'lucide-react'
+import { Database, FileDigit, Hash, Search, AlignLeft, Type, Calendar, ToggleLeft, Activity, List, ChevronRight, ChevronDown } from 'lucide-react'
 
-function StatPill({ label, value, color = 'var(--neon)' }) {
-  return (
-    <div style={{
-      padding: '6px 12px', borderRadius: 8,
-      background: 'rgba(255,255,255,0.03)',
-      border: '1px solid rgba(255,255,255,0.07)',
-      textAlign: 'center'
-    }}>
-      <div style={{ fontFamily: 'var(--f-mono)', fontSize: 15, fontWeight: 600, color }}>{value}</div>
-      <div style={{ fontSize: 10, color: 'var(--t3)', marginTop: 2, fontFamily: 'var(--f-mono)' }}>{label}</div>
-    </div>
-  )
+// Maps pandas dtypes to an icon and a human readable name
+const getTypeInfo = (dtype) => {
+  const typeStr = (dtype || '').toLowerCase()
+  if (typeStr.includes('int') || typeStr.includes('float')) {
+    return { icon: Hash, name: 'Numeric', color: 'text-brand-600', bg: 'bg-brand-50 border-brand-200' }
+  } else if (typeStr.includes('bool')) {
+    return { icon: ToggleLeft, name: 'Boolean', color: 'text-purple-600', bg: 'bg-purple-50 border-purple-200' }
+  } else if (typeStr.includes('date') || typeStr.includes('time')) {
+    return { icon: Calendar, name: 'DateTime', color: 'text-emerald-600', bg: 'bg-emerald-50 border-emerald-200' }
+  } else if (typeStr.includes('cat')) {
+    return { icon: List, name: 'Categorical', color: 'text-orange-600', bg: 'bg-orange-50 border-orange-200' }
+  } else {
+    return { icon: Type, name: 'Text', color: 'text-gray-600', bg: 'bg-gray-100 border-gray-300' }
+  }
 }
 
 function ColumnCard({ col }) {
-  const isNumeric = col.dtype !== 'categorical' && col.dtype !== 'object'
-  const color = isNumeric ? 'var(--neon-2)' : 'var(--neon-3)'
+  const { icon: Icon, name, color, bg } = getTypeInfo(col.dtype)
+  const isId = col.name.toLowerCase().includes('id')
+
+  const sampleValues = Array.isArray(col.sample)
+    ? col.sample.filter(v => v !== null && v !== undefined && v !== 'nan' && v !== 'None').slice(0, 3)
+    : []
+
+  const hasNulls = Array.isArray(col.sample) && col.sample.some(v => v === 'nan' || v === 'None')
 
   return (
-    <div style={{
-      padding: '14px 16px',
-      background: 'rgba(255,255,255,0.02)',
-      border: '1px solid rgba(255,255,255,0.06)',
-      borderRadius: 10
-    }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-          {isNumeric
-            ? <Hash size={12} color="var(--neon-2)" />
-            : <Type size={12} color="var(--neon-3)" />
-          }
-          <span style={{ fontFamily: 'var(--f-mono)', fontSize: 12, fontWeight: 600, color: 'var(--t1)' }}>
-            {col.name}
-          </span>
+    <div className="bg-white border border-gray-200 rounded-lg p-4 hover:border-gray-300 hover:shadow-sm transition-all">
+      <div className="flex items-start justify-between mb-3">
+        <div className="flex items-center gap-2">
+          <div className={`p-1.5 rounded-md border ${bg}`}>
+            <Icon size={14} className={color} />
+          </div>
+          <span className="font-bold text-gray-900 text-sm truncate max-w-[140px]">{col.name}</span>
         </div>
-        <span className="tag" style={{
-          fontSize: 9, padding: '2px 7px',
-          background: `${color}10`, color, border: `1px solid ${color}25`
-        }}>
-          {col.dtype}
-        </span>
+        {isId && (
+          <span className="text-[9px] font-bold tracking-widest uppercase bg-gray-100 text-gray-500 px-1.5 py-0.5 rounded border border-gray-200">ID</span>
+        )}
       </div>
-      <div style={{ fontSize: 11, color: 'var(--t3)', fontFamily: 'var(--f-mono)' }}>
-        Sample: {col.sample?.slice(0, 3).join(', ')}
+
+      <div className="flex items-center justify-between text-[11px] mb-3">
+        <span className="text-gray-500 font-mono bg-gray-50 px-1.5 py-0.5 rounded border border-gray-200">{col.dtype}</span>
+        {hasNulls && (
+          <span className="text-red-600 font-medium bg-red-50 border border-red-200 px-1.5 py-0.5 rounded-sm">Has Nulls</span>
+        )}
+      </div>
+
+      <div className="bg-gray-50 rounded-md p-2.5 border border-gray-200 min-h-[64px]">
+        <div className="text-[9px] font-bold text-gray-500 uppercase tracking-widest mb-1.5">Sample Data</div>
+        <div className="flex flex-wrap gap-1.5">
+          {sampleValues.length > 0 ? (
+            sampleValues.map((val, i) => (
+              <span key={i} className="text-[10px] font-mono bg-white text-gray-700 px-1.5 py-0.5 rounded border border-gray-200 truncate max-w-full">
+                {String(val)}
+              </span>
+            ))
+          ) : (
+            <span className="text-[10px] text-gray-400 italic">No samples</span>
+          )}
+        </div>
       </div>
     </div>
   )
 }
 
-export default function DataProfile({ session }) {
-  const [expanded, setExpanded] = useState(false)
+export default function DataProfile({ session, alwaysExpanded = false }) {
+  const [expanded, setExpanded] = useState(alwaysExpanded)
 
   const numericCols = session.columns?.filter(c => c.dtype !== 'object' && c.dtype !== 'categorical').length || 0
   const catCols = (session.columns?.length || 0) - numericCols
   const nullCols = session.columns?.filter(c => c.sample?.includes('nan') || c.sample?.includes('None')).length || 0
 
   return (
-    <div style={{ borderBottom: '1px solid var(--b1)', background: 'rgba(0,0,0,0.3)' }}>
+    <div className="border-b border-gray-200 bg-white shrink-0">
       {/* Summary bar */}
       <div
-        onClick={() => setExpanded(p => !p)}
-        style={{
-          display: 'flex', alignItems: 'center', gap: 20,
-          padding: '12px 24px', cursor: 'pointer',
-          userSelect: 'none'
-        }}
+        className={`px-8 py-3 flex items-center justify-between transition-colors ${!alwaysExpanded ? 'cursor-pointer hover:bg-gray-50' : ''}`}
+        onClick={() => !alwaysExpanded && setExpanded(!expanded)}
       >
-        <div className="mono-label" style={{ color: 'var(--t2)', flexShrink: 0 }}>
-          📁 {session.filename}
+        <div className="flex items-center gap-6">
+          <div className="flex items-center gap-2">
+            <Search size={14} className="text-gray-400" />
+            <span className="text-xs font-bold text-gray-700">Data Profile</span>
+          </div>
+
+          <div className="h-4 w-px bg-gray-200" />
+
+          <div className="flex items-center gap-4 text-[11px]">
+            <span className="text-gray-500"><strong className="text-gray-900">{session.columns?.length || 0}</strong> Total Columns</span>
+            <span className="text-gray-500"><strong className="text-brand-600">{numericCols}</strong> Numeric</span>
+            <span className="text-gray-500"><strong className="text-orange-600">{catCols}</strong> Categorical/Text</span>
+            {nullCols > 0 && (
+              <span className="text-gray-500"><strong className="text-red-600">{nullCols}</strong> Cols with Nulls</span>
+            )}
+          </div>
         </div>
-        <div style={{ display: 'flex', gap: 12, flex: 1 }}>
-          <StatPill label="ROWS" value={session.shape?.rows?.toLocaleString()} color="var(--neon)" />
-          <StatPill label="COLS" value={session.shape?.cols} color="var(--neon-2)" />
-          <StatPill label="NUMERIC" value={numericCols} color="var(--amber)" />
-          <StatPill label="CATEGORICAL" value={catCols} color="var(--neon-3)" />
-          {nullCols > 0 && <StatPill label="NULL COLS" value={nullCols} color="var(--red)" />}
-        </div>
-        <button style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--t3)' }}>
-          {expanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-        </button>
+
+        {!alwaysExpanded && (
+          <div className="text-gray-400 p-1 hover:text-gray-600 transition-colors">
+            {expanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
+          </div>
+        )}
       </div>
 
-      {/* Expanded columns grid */}
+      {/* Expanded Details */}
       {expanded && (
-        <div style={{ padding: '0 24px 20px' }}>
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
-            gap: 10
-          }}>
-            {session.columns?.map(col => (
-              <ColumnCard key={col.name} col={col} />
+        <div className="px-8 pb-8 pt-4 border-t border-gray-200 bg-gray-50">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
+            {session.columns?.map((col, i) => (
+              <ColumnCard key={i} col={col} />
             ))}
-          </div>
-          {/* Sample data table */}
-          <div style={{ marginTop: 20, overflowX: 'auto' }}>
-            <div className="mono-label" style={{ marginBottom: 10 }}>Sample Data (5 rows)</div>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
-              <thead>
-                <tr>
-                  {session.columns?.slice(0, 7).map(col => (
-                    <th key={col.name} style={{
-                      padding: '6px 12px', textAlign: 'left',
-                      borderBottom: '1px solid var(--b1)',
-                      color: 'var(--t3)', fontFamily: 'var(--f-mono)', fontWeight: 600
-                    }}>
-                      {col.name}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {session.head?.slice(0, 5).map((row, i) => (
-                  <tr key={i}>
-                    {session.columns?.slice(0, 7).map(col => (
-                      <td key={col.name} style={{
-                        padding: '5px 12px',
-                        borderBottom: '1px solid rgba(255,255,255,0.03)',
-                        color: 'var(--t2)', maxWidth: 140,
-                        overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'
-                      }}>
-                        {String(row[col.name] ?? '')}
-                      </td>
-                    ))}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-            {session.columns?.length > 7 && (
-              <div style={{ fontSize: 11, color: 'var(--t3)', marginTop: 6, fontFamily: 'var(--f-mono)' }}>
-                + {session.columns.length - 7} more columns not shown
-              </div>
-            )}
           </div>
         </div>
       )}
